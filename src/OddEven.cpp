@@ -37,8 +37,35 @@ struct oddevennode{
 	struct oddevennode * random;
 
 };
-
+void connect_oddeven(struct oddevennode* head) {
+	struct oddevennode *temp = head->next, *current1 = NULL, *current2 = NULL;
+	if (head->data % 2 == 0)
+		current1 = head;
+	else
+		current2 = head;
+	while (temp) {
+		if (temp->data % 2 == 0) {
+			if (current1 == NULL)
+				current1 = temp;
+			else {
+				current1->random = temp;
+				current1 = temp;
+			}
+		}
+		else {
+			if (current2 == NULL)
+				current2 = temp;
+			else {
+				current2->random = temp;
+				current2 = temp;
+			}
+		}
+		temp = temp->next;
+	}
+}
 int * oddeven_sll(struct oddevennode *head){
-
-	return NULL;
+	if (head == NULL)
+		return NULL;
+	else
+		connect_oddeven(head);
 }

@@ -47,9 +47,64 @@ First Island in DTD ie 'D' occurs alphabatically before 'H' and 'Z')
 #include <stdlib.h>
 #include <stdlib.h>
 #include <stdio.h>
-
-
-char * find_common_route(char * hacklist, char *codelist, int *cost){
-	return NULL;
+void swap(char **str1_ptr, char **str2_ptr)
+{
+	char *temp = *str1_ptr;
+	*str1_ptr = *str2_ptr;
+	*str2_ptr = temp;
+}
+int cmprstrs(char* s1, char* s2) {
+	char *s = s1, *_s = s2;
+	while (*s != '\0' && *s2 != '\0' && *s1 - *s2 == 0) {
+		s1++, s2++;
+	}
+	return *s1 - *s2;
+}
+int max(int a, int b) {
+	return (a > b) ? a : b;
+}
+int len(char* str) {
+	char *s = str;
+	while (*s)
+		s++;
+	return s - str;
+}
+char * find_common_route(char * hacklist, char *codelist, int *cost) {
+	if (hacklist == NULL || codelist == NULL)
+		return NULL;
+	if (cmprstrs(hacklist, codelist) > 0)
+		swap(&hacklist, &codelist);
+	int m = len(hacklist);
+	int n = len(codelist);
+	int** L = (int**)calloc(m + 1, sizeof(int*));
+	int i, j;
+	for (i = 0; i < m + 1; i++)
+		L[i] = (int*)calloc(n + 1, sizeof(int));
+	for (i = 0; i <= m; i++) {
+		for (j = 0; j <= n; j++) {
+			if (i == 0 || j == 0)
+				L[i][j] = 0;
+			else if (hacklist[i - 1] == codelist[j - 1])
+				L[i][j] = L[i - 1][j - 1] + 1;
+			else
+				L[i][j] = max(L[i - 1][j], L[i][j - 1]);
+		}
+	}
+	int index = L[m][n];
+	char *lcs = (char*)calloc(index + 1, sizeof(char));
+	lcs[index] = '\0';
+	i = 0, j = 0, index = 0;
+	while (i <= m && j <= n) {
+		if (hacklist[i] == codelist[j]) {
+			lcs[index] = hacklist[i];
+			i++; j++; index++;
+		}
+		else if (L[m-i-1][j] < L[i][n-j-1])
+			i++;
+		else
+			j++;
+	}
+	hacklist = codelist = lcs;
+	*cost = L[m][n];
 }
 
